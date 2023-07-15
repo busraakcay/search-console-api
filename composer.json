@@ -1,0 +1,14 @@
+{
+  "config": {
+    "platform": {
+      "php": "7.4.3"
+    },
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  },
+  "require": {
+    "google/apiclient": "^2.15",
+    "vlucas/phpdotenv": "^5.5"
+  }
+}
