@@ -159,3 +159,49 @@ function createInspectedURL($urlInspection)
     }
     return $inspectedURL;
 }
+
+function makeHtmlTemplate($inspectedURLs)
+{
+    $html = '<div style="padding: 20px;">';
+    foreach ($inspectedURLs as $inspectedURL) {
+        $html .= '<div>
+        <h4 style="padding-bottom: 16px;">Index Durumu <small>[' . $inspectedURL["indexStatusResult"]["verdict"] . ']</small></h4>
+        <small><b>' . $inspectedURL["link"] . '</b></small>
+        <br><br>
+        <p><b>URL Durumu: </b>' . $inspectedURL["indexStatusResult"]["coverageState"] . '</p>
+        <p><b>Index Analizi: </b>' . getVerdictDescription($inspectedURL["indexStatusResult"]["verdict"]) . '</p>
+        <p><b>Son Taranma Tarihi: </b>' . formatDateString($inspectedURL["indexStatusResult"]["lastCrawlTime"]) . '</p>
+        <p><b>Index Durumu: </b>' . getIndexingStateDescription($inspectedURL["indexStatusResult"]["indexingState"]) . '</p>
+        <p><b>Sayfa Getirme Durumu: </b>' . getPageFetchStateDescription($inspectedURL["indexStatusResult"]["pageFetchState"]) . '</p>
+        <p><b>Robots.txt Kural Durumu: </b>' . getRobotTxtStateDescription($inspectedURL["indexStatusResult"]["robotsTxtState"]) . '</p>
+        <p>Makinecim.com\'da ilanı görmek için <a href="' . $inspectedURL["link"] . '">tıklayınız</a></p>
+        <p>Bu URL\'i search console\'da denetlemek için <a href="' . $inspectedURL["searchConsoleLink"] . '">tıklayınız</a></p>';
+
+        if (isset($inspectedURL["mobileUsabilityResult"])) {
+            $html .= '<br>
+            <h4 style="padding-bottom: 16px;">Mobil Kullanılabilirlik <small>[' . $inspectedURL["mobileUsabilityResult"]["verdict"] . ']</small></h4>';
+
+            foreach ($inspectedURL["mobileUsabilityResult"]["issues"] as $key => $issue) {
+                $html .= '<p><b>[Sorun ' . ($key + 1) . ']</b> ' . $issue["message"] . ' [' . $issue["issueType"] . ']</p>';
+            }
+        }
+        if (isset($inspectedURL["richResultsResult"])) {
+            $html .= '<br>
+            <h4 style="padding-bottom: 16px;">Zengin Sonuçlar <small>[' . $inspectedURL["richResultsResult"]["verdict"] . ']</small></h4>';
+
+            foreach ($inspectedURL["richResultsResult"]["detectedItems"] as $key => $detectedItems) {
+                $html .= '<p><b>[Sorun ' . ($key + 1) . '] </b>' . $detectedItems["richResultType"] . '</p>
+                <ul class="ml-2">';
+
+                foreach ($detectedItems["items"] as $itemKey => $item) {
+                    $html .= '<li><b>[Öğe ' . ($itemKey + 1) . '] </b>' . $item["name"] . '</li>';
+                }
+
+                $html .= '</ul>';
+            }
+        }
+        $html .= '</div><hr>';
+    }
+    $html .= '</div>';
+    return $html;
+}

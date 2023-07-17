@@ -7,6 +7,7 @@ $dotenv->load();
 
 require_once 'app/helpers/Helpers.php';
 require_once 'app/services/ApiRequest.php';
+require_once 'app/services/Mailer.php';
 require_once 'app/services/GoogleSearchConsoleClient.php';
 require_once 'app/routes/Routes.php';
 ?>
