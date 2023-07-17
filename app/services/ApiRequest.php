@@ -5,9 +5,9 @@ class ApiRequest
     private $url;
     private $options;
 
-    public function __construct($url = null)
+    public function __construct()
     {
-        $this->url = $_ENV['BASE_URL'] . "listings/latest"; // $url
+        $this->url = $_ENV['API_URL'];
         $this->options = array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,

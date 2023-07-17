@@ -57,16 +57,16 @@ class Controller
                 foreach ($batchUrls as $url) {
                     $urlInspection = $this->searchConsoleApi->inspectUrl($url);
                     $inspectedURL = createInspectedURL($urlInspection);
-                    array_push($inspectedURLs, $inspectedURL);
                     if (count($inspectedURL) > 0) {
                         $inspectedURL["link"] = $url;
                         $batchInspectedURLs[] = $inspectedURL;
                     }
+                    array_push($inspectedURLs, $inspectedURL);
                 }
                 $html = makeHtmlTemplate($batchInspectedURLs);
                 $isMailSend = $this->mailer->sendEmail($html);
                 if ($isMailSend) {
-                    echo "Mail gönderildi.";
+                    echo "Mail gönderildi.\n";
                     sleep($delaySeconds);
                 } else {
                     echo "Mail gönderilirken bir hata oluştu.\n";
