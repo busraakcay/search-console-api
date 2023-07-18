@@ -20,7 +20,7 @@ class GoogleSearchConsoleClient
         $this->client->setAuthConfig("credentials.json");
         $this->client->setClientId($_ENV['CLIENT_ID']);
         $this->client->setClientSecret($_ENV['CLIENT_SECRET']);
-        $this->client->setLoginHint($_ENV['E_MAIL']);
+        // $this->client->setLoginHint($_ENV['E_MAIL']);
         $this->client->setApprovalPrompt('force');
         $this->client->setAccessType('offline');
         $this->client->addScope(Webmasters::WEBMASTERS_READONLY); // WEBMASTERS
@@ -42,8 +42,13 @@ class GoogleSearchConsoleClient
         session_start();
         if (isset($_SESSION['access_token'])) {
             if ($this->isAccessTokenExpired($_SESSION['access_token'])) {
-                $accessToken = $this->client->fetchAccessTokenWithRefreshToken($_SESSION['access_token']['refresh_token']);
-                $_SESSION['access_token'] = $accessToken;
+                if (isset($_SESSION['access_token']['refresh_token'])) {
+                    $accessToken = $this->client->fetchAccessTokenWithRefreshToken($_SESSION['access_token']['refresh_token']);
+                    $_SESSION['access_token'] = $accessToken;
+                } else {
+                    $accessToken = $this->client->fetchAccessTokenWithAuthCode($authorizationCode);
+                    $_SESSION['access_token'] = $accessToken;
+                }
             } else {
                 $accessToken = $_SESSION['access_token'];
             }
