@@ -20,7 +20,6 @@ class Mailer
         $this->mailer->Password = $_ENV['MAILER_PASSWORD'];
         $this->mailer->SMTPAutoTLS = false;
         $this->mailer->Port = 587;
-        
         $this->mailer->setFrom($_ENV['MAILER_USERNAME'], 'Search Console');
         $this->mailer->isHTML(true);
         // $this->mailer->SMTPSecure = 'tls';
@@ -29,12 +28,13 @@ class Mailer
     public function sendEmail($body)
     {
         try {
+            $this->mailer->CharSet = 'UTF-8';
+            $this->mailer->Encoding = 'base64';
             $this->mailer->clearAddresses();
             $this->mailer->addAddress($_ENV['RECIPIENT_MAIL']);
-
-            $this->mailer->Subject = "Search Console Kontrol";
+            $this->mailer->Subject = "Search Console Status Check";
             $this->mailer->Body = $body;
-
+            $this->mailer->ContentType = 'text/html; charset=UTF-8';
             $this->mailer->send();
             return true;
         } catch (Exception $e) {

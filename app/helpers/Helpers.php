@@ -202,6 +202,6 @@ function makeHtmlTemplate($inspectedURLs)
         }
         $html .= '</div><hr>';
     }
-    $html .= '</div>';
+    $html .= '</div><br>';
     return $html;
 }

@@ -24,9 +24,10 @@ class GoogleSearchConsoleClient
         $this->client->setApprovalPrompt('force');
         $this->client->setAccessType('offline');
         $this->client->addScope(Webmasters::WEBMASTERS_READONLY); // WEBMASTERS
-        if ($authorizationCode !== null) {
-            $this->startSession($authorizationCode);
-        }
+        // if ($authorizationCode !== null) {
+        //     $this->startSession($authorizationCode);
+        // }
+        $this->startSession();
     }
 
     public function loginWithGoogle()
@@ -37,26 +38,32 @@ class GoogleSearchConsoleClient
         exit;
     }
 
-    public function startSession($authorizationCode)
+    public function startSession()
     {
-        session_start();
-        if (isset($_SESSION['access_token'])) {
-            if ($this->isAccessTokenExpired($_SESSION['access_token'])) {
-                if (isset($_SESSION['access_token']['refresh_token'])) {
-                    $accessToken = $this->client->fetchAccessTokenWithRefreshToken($_SESSION['access_token']['refresh_token']);
-                    $_SESSION['access_token'] = $accessToken;
-                } else {
-                    $accessToken = $this->client->fetchAccessTokenWithAuthCode($authorizationCode);
-                    $_SESSION['access_token'] = $accessToken;
-                }
-            } else {
-                $accessToken = $_SESSION['access_token'];
-            }
-        } else {
-            $accessToken = $this->client->fetchAccessTokenWithAuthCode($authorizationCode);
-            $_SESSION['access_token'] = $accessToken;
+        try {
+            $accessToken = $this->client->fetchAccessTokenWithRefreshToken($_ENV['REFRESH_TOKEN']);
+            $this->client->setAccessToken($accessToken);
+        } catch (\Exception $e) {
+            $this->client->setAccessToken($_ENV['ACCESS_TOKEN']);
         }
-        $this->client->setAccessToken($accessToken);
+        // $accessToken = $this->client->fetchAccessTokenWithRefreshToken($_ENV['REFRESH_TOKEN']);
+        // session_start();
+        // if (isset($_SESSION['access_token'])) {
+        //     if ($this->isAccessTokenExpired($_SESSION['access_token'])) {
+        //         if (isset($_SESSION['access_token']['refresh_token'])) {
+        //             $accessToken = $this->client->fetchAccessTokenWithRefreshToken($_SESSION['access_token']['refresh_token']);
+        //             $_SESSION['access_token'] = $accessToken;
+        //         } else {
+        //             $accessToken = $this->client->fetchAccessTokenWithAuthCode($authorizationCode);
+        //             $_SESSION['access_token'] = $accessToken;
+        //         }
+        //     } else {
+        //         $accessToken = $_SESSION['access_token'];
+        //     }
+        // } else {
+        //     $accessToken = $this->client->fetchAccessTokenWithAuthCode($authorizationCode);
+        //     $_SESSION['access_token'] = $accessToken;
+        // }
     }
 
     private function isAccessTokenExpired($accessToken)
