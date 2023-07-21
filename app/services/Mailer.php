@@ -25,14 +25,14 @@ class Mailer
         // $this->mailer->SMTPSecure = 'tls';
     }
 
-    public function sendEmail($body)
+    public function sendEmail($subject, $body)
     {
         try {
             $this->mailer->CharSet = 'UTF-8';
             $this->mailer->Encoding = 'base64';
             $this->mailer->clearAddresses();
             $this->mailer->addAddress($_ENV['RECIPIENT_MAIL']);
-            $this->mailer->Subject = "Search Console Status Check";
+            $this->mailer->Subject = $subject . ' (' . date('d.m.Y') . ')';
             $this->mailer->Body = $body;
             $this->mailer->ContentType = 'text/html; charset=UTF-8';
             $this->mailer->send();

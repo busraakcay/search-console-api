@@ -7,6 +7,8 @@ use Google\Service\Webmasters;
 use Google\Service\SearchConsole;
 use Google\Service\SearchConsole\InspectUrlIndexRequest;
 use Google\Service\Webmasters\SearchAnalyticsQueryRequest;
+use Google\Service\Webmasters\ApiDimensionFilter;
+use Google\Service\Webmasters\ApiDimensionFilterGroup;
 
 class GoogleSearchConsoleClient
 {
@@ -87,6 +89,46 @@ class GoogleSearchConsoleClient
         $response = $searchAnalytics->query($this->siteUrl, $request);
         $rows = $response->getRows();
         return $rows;
+    }
+
+    public function analyzeKeywords($keywords, $date)
+    {
+        // $startDate = date('Y-m-d', strtotime('-' . ($startDateDiff + 3) . 'days'));
+        // $endDate = date('Y-m-d', strtotime('-' . $endDateDiff . 'days'));
+        $service = new Webmasters($this->client);
+        $request = new SearchAnalyticsQueryRequest();
+        $request->setStartDate($date);
+        $request->setEndDate($date);
+        $request->setDimensions(['query']);
+        $request->setRowLimit(10);
+        $keywordFilter = new ApiDimensionFilter();
+        $keywordFilter->setDimension('query');
+        $keywordFilter->setOperator('CONTAINS');
+        $analyzedKeywords = array();
+        foreach ($keywords as $keyword) {
+            $analyzedKeyword = array();
+            $keywordFilter->setExpression($keyword);
+            $filterGroup = new ApiDimensionFilterGroup();
+            $filterGroup->setFilters([$keywordFilter]);
+            $request->setDimensionFilterGroups([$filterGroup]);
+            $response = $service->searchanalytics->query($this->siteUrl, $request);
+            $analyzedKeyword["keyword"] = $keyword;
+            $analyzedKeyword["rows"] = [];
+            if (!empty($response->getRows())) {
+                foreach ($response->getRows() as $row) {
+                    $rows = array();
+                    $rows["query"] = $row->getKeys()[0];
+                    $rows["clicks"] = $row->getClicks();
+                    $rows["ctr"] = $row->getCtr();
+                    $rows["impressions"] = $row->getImpressions();
+                    $rows["position"] = $row->getPosition();
+                    $rows["date"] = formatDateString($date);
+                    array_push($analyzedKeyword["rows"], $rows);
+                }
+            }
+            array_push($analyzedKeywords, $analyzedKeyword);
+        }
+        return $analyzedKeywords;
     }
 
     public function inspectUrl($inspectionUrl)

@@ -6,9 +6,17 @@
 <?php if ($isLoggedIn) : ?>
     <div class="d-flex row justify-content-between align-items-center">
         <h2>Google Search Console</h2>
-        <?php echo '<a class="btn btn-primary" href="scanUrls' . '?code=' . $authorizationCode . '">'; ?>
-        Tüm Linkleri Tara
-        </a>
+        <div>
+            <?php echo '<a class="btn btn-primary" href="scanUrls' . '?code=' . $authorizationCode . '">'; ?>
+            Tüm Linkleri Tara
+            </a>
+            <?php echo '<a class="btn btn-success" href="analyzeKeywordsWeekly">'; ?>
+            Haftalık Kelime Analiz Sonucu
+            </a>
+            <?php echo '<a class="btn btn-warning" href="analyzeKeywords">'; ?>
+            Kelime Analiz Et
+            </a>
+        </div>
     </div>
     <br>
     <table class="table table-hover">

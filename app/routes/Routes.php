@@ -5,6 +5,8 @@ $routes = [
     '/loginWithGoogle' => 'Controller@loginWithGoogle',
     '/urlResults' => 'Controller@urlResults',
     '/scanUrls' => 'Controller@scanUrls',
+    '/analyzeKeywords' => 'Controller@analyzeKeywords',
+    '/analyzeKeywordsWeekly' => 'Controller@analyzeKeywordsWeekly',
 ];
 
 $requestUrl = isset($_GET['url']) ? '/' . trim($_GET['url'], '/') : '/';
