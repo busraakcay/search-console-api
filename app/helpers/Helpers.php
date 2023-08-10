@@ -446,7 +446,7 @@ function generateHTMLTableForWeeklyResult($data)
                         <td style="width: 10%; background-color: white"></td>
                         <td style="width: 90%; padding: 8px 16px; text-align: left;  border-left: 0px;">' . $row['query'] . '</td>
                         <td style="text-align: center;">
-                        <table>
+                            <table>
                                 <tr>
                                     <td style="width: 200px; padding: 8px 16px; text-align: center;">' . $emptySpan . $formatLastCl . '</td>
                                     <td style="width: 200px; padding: 8px 16px; text-align: center;">' . $compareClicksSpan . number_format($row["clicks"], 2) . '</td>
@@ -454,7 +454,7 @@ function generateHTMLTableForWeeklyResult($data)
                             </table>
                         </td>
                         <td style="text-align: center;">
-                        <table>
+                            <table>
                                 <tr>
                                     <td style="width: 200px; padding: 8px 16px; text-align: center;">' . $emptySpan . $formatLastCtr . '</td>
                                     <td style="width: 200px; padding: 8px 16px; text-align: center;">' . $compareCtrSpan .  number_format($row["ctr"], 2) . '</td>
@@ -462,7 +462,7 @@ function generateHTMLTableForWeeklyResult($data)
                             </table>
                         </td>
                         <td style="text-align: center;">
-                        <table>
+                            <table>
                                 <tr>
                                     <td style="width: 200px; padding: 8px 16px; text-align: center;">' . $emptySpan . $formatLastImp . '</td>
                                     <td style="width: 200px; padding: 8px 16px; text-align: center;">' . $compareImpSpan . number_format($row["impressions"], 2) . '</td>
@@ -470,7 +470,7 @@ function generateHTMLTableForWeeklyResult($data)
                             </table>
                         </td>
                         <td style="text-align: center;">
-                        <table>
+                            <table>
                                 <tr>
                                     <td style="width: 200px; padding: 8px 16px; text-align: center;">' . $emptySpan . $formatLastPos . '</td>
                                     <td style="width: 200px; padding: 8px 16px; text-align: center;">' . $comparePosSpan . number_format($row["position"], 2) . '</td>
