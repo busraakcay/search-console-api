@@ -6,7 +6,9 @@ $routes = [
     '/urlResults' => 'Controller@urlResults',
     '/scanUrls' => 'Controller@scanUrls',
     '/analyzeKeywords' => 'Controller@analyzeKeywords',
-    '/analyzeKeywordsWeekly' => 'Controller@analyzeKeywordsWeekly',
+    '/analyzeKeywordsWeekly' => 'Controller@analyzeKeyw ordsWeekly',
+    '/ga4' => 'Controller@ga4',
+    '/getActiveUserCount' => 'Controller@getActiveUserCount',
 ];
 
 $requestUrl = isset($_GET['url']) ? '/' . trim($_GET['url'], '/') : '/';

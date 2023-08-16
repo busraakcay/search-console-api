@@ -128,7 +128,7 @@ class Controller
             }
             $html = makeHtmlTemplate($batchInspectedURLs);
             $htmlTemplates .= $html;
-            sleep($delaySeconds);
+            // sleep($delaySeconds);
         }
         $isMailSend = $this->mailer->sendEmail("URL Denetleme Sonucu", $htmlTemplates);
         if ($isMailSend) {
@@ -141,5 +141,37 @@ class Controller
         //     header("Location: index.php");
         //     exit;
         // }
+    }
+
+    public function getActiveUserCount()
+    {
+        $client = new GA4ApiClient();
+        $userCountLast5Min = $client->getOnlineUsersLast5Minutes();
+        echo "<p>" . $userCountLast5Min . "</p>";
+    }
+
+    public function ga4()
+    {
+        $client = new GA4ApiClient();
+        $userCountLast5Min = $client->getOnlineUsersLast5Minutes();
+
+        $today = date("Y-m-d");
+        $initialDate = date("Y-m-d", strtotime($today . "-1 days"));
+
+        $lastWeek = date("Y-m-d", strtotime($initialDate . "-6 days"));
+
+        $anotherLastWeek = date("Y-m-d", strtotime($lastWeek . "-6 days"));
+
+        $getTotalThisWeekActiveUsers = $client->getActiveUsers($lastWeek, $initialDate);
+        $getTotalLastWeekActiveUsers = $client->getActiveUsers($anotherLastWeek, $lastWeek);
+
+
+        $getChangeRateAndValue = calculatePercentageChange($getTotalLastWeekActiveUsers, $getTotalThisWeekActiveUsers);
+
+        $userDateCountThisWeek = $client->getActiveUserAndDateJson($initialDate, $lastWeek);
+        $userDateCountLastWeek = $client->getActiveUserAndDateJson($lastWeek, $anotherLastWeek);
+
+
+        require_once 'app/views/ga4.php';
     }
 }

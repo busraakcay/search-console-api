@@ -486,3 +486,24 @@ function generateHTMLTableForWeeklyResult($data)
     $html .= '</table>';
     return $html;
 }
+
+
+function calculatePercentageChange($previousValue, $currentValue)
+{
+    if ($previousValue === 0) {
+        return ($currentValue > 0) ? 100 : 0;
+    }
+
+    $percentageChange = (($currentValue - $previousValue) / $previousValue) * 100;
+    $percentageRate =  "%" . abs(round($percentageChange, 2));
+    $percentageValue = "";
+
+    if ($percentageChange > 0) {
+        $percentageValue = "Artış var";
+    } elseif ($percentageChange < 0) {
+        $percentageValue = "Azalış var";
+    } else {
+        $percentageValue = "Değişim yok";
+    }
+    return [$percentageValue, $percentageRate];
+}

@@ -16,6 +16,9 @@
             <?php echo '<a class="btn btn-warning" href="analyzeKeywords">'; ?>
             Kelime Analiz Et
             </a>
+            <?php echo '<a class="btn btn-danger" href="ga4">'; ?>
+            GA4
+            </a>
         </div>
     </div>
     <br>

@@ -31,7 +31,7 @@ class Mailer
             $this->mailer->CharSet = 'UTF-8';
             $this->mailer->Encoding = 'base64';
             $this->mailer->clearAddresses();
-            $this->mailer->addAddress($_ENV['RECIPIENT_MAIL']);
+            $this->mailer->addAddress($_ENV['RECIPIENT_MAIL2']);
             $this->mailer->Subject = $subject . ' (' . date('d.m.Y') . ')';
             $this->mailer->Body = $body;
             $this->mailer->ContentType = 'text/html; charset=UTF-8';
