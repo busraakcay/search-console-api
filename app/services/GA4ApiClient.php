@@ -34,8 +34,145 @@ class GA4ApiClient
         $this->client = new BetaAnalyticsDataClient();
     }
 
+    public function getOnlineUsersLast5Minutes()
+    {
+        $response = $this->client->runRealtimeReport([
+            'property' => 'properties/' . $this->propertyId,
+            'dateRanges' => [
+                new DateRange([
+                    'start_date' => '5minutesAgo',
+                    'end_date' => 'now',
+                ]),
+            ],
+            'metrics' => [
+                new Metric([
+                    'name' => 'activeUsers',
+                ]),
+            ],
+        ]);
 
-    public function runReport()
+        $metricValue = $response->getRows()[0]->getMetricValues()[0]->getValue();
+
+        return $metricValue;
+    }
+
+
+    public function getActiveUsers($startDate, $endDate)
+    {
+        try {
+            $response = $this->client->runReport([ // returns a customized report of ga4 event data.
+                'property' => 'properties/' . $this->propertyId,
+                'dateRanges' => [
+                    new DateRange([
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                    ]),
+                ],
+                'metrics' => [
+                    new Metric(
+                        [
+                            'name' => 'activeUsers',
+                        ]
+                    )
+                ]
+            ]);
+            return $response->getRows()[0]->getMetricValues()[0]->getValue();
+        } finally {
+            $this->client->close();
+        }
+    }
+
+    public function getActiveUserAndDateJson($firstDay, $lastDay)
+    {
+        $startDate = strtotime($lastDay);
+        $endDate = strtotime($firstDay);
+
+        $userDateCountData = array();
+        while ($endDate >= $startDate) {
+            $startDateFormatted = date("Y-m-d", $startDate);
+            $formatedDate = $startDateFormatted;
+            $userCount = $this->getActiveUsers($formatedDate, $formatedDate);
+            $formatDateDMY = formatDateString($formatedDate);
+            array_push($userDateCountData, ["label" => $formatDateDMY, "y" => $userCount]);
+            $startDate = strtotime('+1 day', $startDate);
+        }
+        return $userDateCountData;
+    }
+
+    public function runReport($startDate, $endDate, $dimensionNames, $metricName = 'activeUsers', $size = null)
+    {
+        try {
+            $dimensions = [];
+            foreach ($dimensionNames as $dimensionName) {
+                $dimensions[] = new Dimension([
+                    'name' => $dimensionName,
+                ]);
+            }
+
+            $response = $this->client->runReport([
+                'property' => 'properties/' . $this->propertyId,
+                'dateRanges' => [
+                    new DateRange([
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                    ]),
+                ],
+                'dimensions' => $dimensions,
+                'metrics' => [
+                    new Metric([
+                        'name' => $metricName,
+                    ])
+                ]
+            ]);
+
+            $resultArray = [];
+            $recordCount = 0;
+            foreach ($response->getRows() as $row) {
+                if (isset($size)) {
+                    if ($recordCount >= $size) {
+                        break;
+                    }
+                }
+                $dimensionValues = $row->getDimensionValues();
+                $dimensionArray = [];
+
+                foreach ($dimensionValues as $dimensionValue) {
+                    $dimensionArray[] = $dimensionValue->getValue();
+                }
+
+                $resultArray[] = [
+                    'title' => $dimensionArray[0] ?? '',
+                    'url' => $dimensionArray[1] ?? '',
+                    'user' => $row->getMetricValues()[0]->getValue(),
+                ];
+                $recordCount++;
+            }
+            return $resultArray;
+        } finally {
+            $this->client->close();
+        }
+    }
+
+    public function getMetaData()
+    {
+        $formattedName = sprintf('properties/%s/metadata', $this->propertyId);
+
+        try {
+            $response = $this->client->getMetaData($formattedName);
+        } catch (ApiException $ex) {
+            printf('Call failed with message: %s' . PHP_EOL, $ex->getMessage());
+        }
+
+        printf(
+            'Dimensions and metrics available for Google Analytics 4 property'
+                . ' %s (including custom fields):' . PHP_EOL,
+            $this->propertyId
+        );
+        echo "<br />";
+        printGetMetadataByPropertyId($response);
+    }
+
+    public function runReport_test()
     {
         try {
             $response = $this->client->runReport([ // returns a customized report of ga4 event data.
@@ -66,6 +203,17 @@ class GA4ApiClient
                 print $row->getDimensionValues()[0]->getValue()
                     . ' ' . $row->getMetricValues()[0]->getValue() . "<br/>";
             }
+
+            // Multiple Dimension
+            // foreach ($response->getRows() as $row) {
+            //     $dimensionValues = $row->getDimensionValues();
+            //     $dimensionString = '';
+            //     foreach ($dimensionValues as $dimensionValue) {
+            //         $dimensionString .= $dimensionValue->getValue() . ' ';
+            //     }
+            //     print rtrim($dimensionString) . ' ' . $row->getMetricValues()[0]->getValue() . "<br/>";
+            // }
+
         } finally {
             $this->client->close();
         }
@@ -150,90 +298,5 @@ class GA4ApiClient
         ]);
 
         printRunRealtimeReportResponse($response);
-    }
-
-
-    public function getOnlineUsersLast5Minutes()
-    {
-        $response = $this->client->runRealtimeReport([
-            'property' => 'properties/' . $this->propertyId,
-            'dateRanges' => [
-                new DateRange([
-                    'start_date' => '5minutesAgo',
-                    'end_date' => 'now',
-                ]),
-            ],
-            'metrics' => [
-                new Metric([
-                    'name' => 'activeUsers',
-                ]),
-            ],
-        ]);
-
-        $metricValue = $response->getRows()[0]->getMetricValues()[0]->getValue();
-
-        return $metricValue;
-    }
-
-
-    public function getActiveUsers($startDate, $endDate)
-    {
-        try {
-            $response = $this->client->runReport([ // returns a customized report of ga4 event data.
-                'property' => 'properties/' . $this->propertyId,
-                'dateRanges' => [
-                    new DateRange([
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                    ]),
-                ],
-                'metrics' => [
-                    new Metric(
-                        [
-                            'name' => 'activeUsers',
-                        ]
-                    )
-                ]
-            ]);
-            return $response->getRows()[0]->getMetricValues()[0]->getValue();
-        } finally {
-            $this->client->close();
-        }
-    }
-
-    public function getActiveUserAndDateJson($firstDay, $lastDay)
-    {
-        $startDate = strtotime($lastDay);
-        $endDate = strtotime($firstDay);
-
-        $userDateCountData = array();
-        while ($endDate >= $startDate) {
-            $startDateFormatted = date("Y-m-d", $startDate);
-            $formatedDate = $startDateFormatted;
-            $userCount = $this->getActiveUsers($formatedDate, $formatedDate);
-            $formatDateDMY = formatDateString($formatedDate);
-            array_push($userDateCountData, ["label" => $formatDateDMY, "y" => $userCount]);
-            $startDate = strtotime('+1 day', $startDate);
-        }
-        return $userDateCountData;
-    }
-
-    public function getMetaData()
-    {
-        $formattedName = sprintf('properties/%s/metadata', $this->propertyId);
-
-        try {
-            $response = $this->client->getMetaData($formattedName);
-        } catch (ApiException $ex) {
-            printf('Call failed with message: %s' . PHP_EOL, $ex->getMessage());
-        }
-
-        printf(
-            'Dimensions and metrics available for Google Analytics 4 property'
-                . ' %s (including custom fields):' . PHP_EOL,
-            $this->propertyId
-        );
-        echo "<br />";
-        printGetMetadataByPropertyId($response);
     }
 }

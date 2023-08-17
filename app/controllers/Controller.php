@@ -165,12 +165,12 @@ class Controller
         $getTotalThisWeekActiveUsers = $client->getActiveUsers($lastWeek, $initialDate);
         $getTotalLastWeekActiveUsers = $client->getActiveUsers($anotherLastWeek, $lastWeek);
 
-
         $getChangeRateAndValue = calculatePercentageChange($getTotalLastWeekActiveUsers, $getTotalThisWeekActiveUsers);
 
         $userDateCountThisWeek = $client->getActiveUserAndDateJson($initialDate, $lastWeek);
         $userDateCountLastWeek = $client->getActiveUserAndDateJson($lastWeek, $anotherLastWeek);
 
+        $pagesAndUrls = $client->runReport($lastWeek, $initialDate, ["pageTitle", "fullPageUrl"], "totalUsers", 10);
 
         require_once 'app/views/ga4.php';
     }

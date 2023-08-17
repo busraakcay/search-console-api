@@ -46,6 +46,31 @@
         </div>
     </div>
     <div id="chartContainer" class="chartContainer"></div>
+
+    <div class="tableContainer">
+        <h5>Sayfalar son 7 gün (<?php echo formatDateString($lastWeek) . " - " . formatDateString($initialDate) ?>)</h5>
+        <table class="table" borderless>
+            <tr>
+                <th>Sayfa Başlığı</th>
+                <th>Sayfa URL'i</th>
+                <th>Görüntülenme</th>
+            </tr>
+
+            <?php
+            foreach ($pagesAndUrls as $item) :
+            ?>
+                <tr>
+                    <td> <?php echo $item["title"] ?></td>
+                    <td> <?php echo $item["url"] ?></td>
+                    <td> <?php echo $item["user"] ?></td>
+                </tr>
+            <?php
+            endforeach;
+            ?>
+
+        </table>
+    </div>
+
 </div>
 
 <script>
