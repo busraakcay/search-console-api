@@ -156,21 +156,24 @@ class Controller
         $userCountLast5Min = $client->getOnlineUsersLast5Minutes();
 
         $today = date("Y-m-d");
-        $initialDate = date("Y-m-d", strtotime($today . "-1 days"));
+        $todayMinus1 = date("Y-m-d", strtotime($today . "-1 days"));
+     
+        
+        $lastWeek = date("Y-m-d", strtotime($today . "-7 days"));
+        $lastWeekMinus1 = date("Y-m-d", strtotime($lastWeek . "-1 days"));
 
-        $lastWeek = date("Y-m-d", strtotime($initialDate . "-6 days"));
+        $anotherLastWeek = date("Y-m-d", strtotime($lastWeek . "-7 days"));
 
-        $anotherLastWeek = date("Y-m-d", strtotime($lastWeek . "-6 days"));
-
-        $getTotalThisWeekActiveUsers = $client->getActiveUsers($lastWeek, $initialDate);
-        $getTotalLastWeekActiveUsers = $client->getActiveUsers($anotherLastWeek, $lastWeek);
+        $getTotalThisWeekActiveUsers = $client->getActiveUsers($lastWeek, $todayMinus1);
+        
+        $getTotalLastWeekActiveUsers = $client->getActiveUsers($anotherLastWeek, $lastWeekMinus1);
 
         $getChangeRateAndValue = calculatePercentageChange($getTotalLastWeekActiveUsers, $getTotalThisWeekActiveUsers);
 
-        $userDateCountThisWeek = $client->getActiveUserAndDateJson($initialDate, $lastWeek);
+        $userDateCountThisWeek = $client->getActiveUserAndDateJson($today, $lastWeek);
         $userDateCountLastWeek = $client->getActiveUserAndDateJson($lastWeek, $anotherLastWeek);
 
-        $pagesAndUrls = $client->runReport($lastWeek, $initialDate, ["pageTitle", "fullPageUrl"], "totalUsers", 10);
+        $pagesAndUrls = $client->runReport($lastWeek, $today, ["pageTitle", "fullPageUrl"], "totalUsers", 10);
 
         require_once 'app/views/ga4.php';
     }

@@ -10,7 +10,7 @@ function printArray($arr)
 function formatDateString($dateString)
 {
     $date = new DateTime($dateString);
-    $date->setTimezone(new DateTimeZone('UTC'));
+    // $date->setTimezone(new DateTimeZone('UTC'));
     return $date->format('d.m.Y');
 }
 

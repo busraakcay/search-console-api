@@ -88,7 +88,7 @@ class GA4ApiClient
         $endDate = strtotime($firstDay);
 
         $userDateCountData = array();
-        while ($endDate >= $startDate) {
+        while ($endDate > $startDate) {
             $startDateFormatted = date("Y-m-d", $startDate);
             $formatedDate = $startDateFormatted;
             $userCount = $this->getActiveUsers($formatedDate, $formatedDate);

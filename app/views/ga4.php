@@ -14,7 +14,7 @@
         <div class="userCountContainer">
             <p><b>Geçen hafta</b> aktif kullanıcılar</p>
             <p>
-                <?php echo formatDateString($anotherLastWeek) . " - " . formatDateString($lastWeek) ?>
+                <?php echo formatDateString($anotherLastWeek) . " - " . formatDateString($lastWeekMinus1) ?>
             </p>
             <div class="activeUserBoxContainer">
                 <p class="activeUserBox">
@@ -25,7 +25,7 @@
         <div class="userCountContainer">
             <p><b>Bu hafta</b> aktif kullanıcılar</p>
             <p>
-                <?php echo formatDateString($lastWeek) . " - " . formatDateString($initialDate) ?>
+                <?php echo formatDateString($lastWeek) . " - " . formatDateString($todayMinus1) ?>
             </p>
             <div class="activeUserBoxContainer">
                 <p class="activeUserBox">
